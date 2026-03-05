@@ -20,7 +20,6 @@ class Stopwatch:
         self.elapsed_time = 0.0
         self.laps = []
         self.data_file = "laps_data.json"
-        self.hours = 0
         self.saved_time = 0.0
 
         # Дисплей времени
@@ -85,7 +84,6 @@ class Stopwatch:
             activebackground="#9FD6F0",
             width=8,
             command=self.lap,
-            state=tk.DISABLED
         )
         self.lap_btn.grid(row=0, column=2, padx=5)
 
@@ -177,21 +175,24 @@ class Stopwatch:
 
     def lap(self):
         """Записывает круг или показывает статистику"""
-        if not self.running and len(self.laps) > 0:
+
+        if not self.running and self.elapsed_time == 0.0 and len(self.laps) > 0:
             total = sum(self.laps)
             avg = total / len(self.laps)
             self.set_info(
-                f"Всего: {self.format_time(total, include_hours=True)}\n"
-                f"В среднем: {self.format_time(avg, include_hours=True)}"
+                f"✨Всего: {self.format_time(total, include_hours=True)}\n"
+                f"✨ В среднем: {self.format_time(avg, include_hours=True)}"
             )
-            return
+        else:
 
-        current = time.time() - self.start_time
-        self.laps.append(current)
-        self.save_laps()
-        self.set_info(f"Круг {self.format_time(current)}")
-        self.clear()
-        self.start_btn.config(text="▶", bg="#2B2B2B")
+            self.stop()
+            #current = time.time() - self.start_time
+            self.laps.append(self.elapsed_time)
+            self.save_laps()
+            self.set_info(f"✨Записано {self.format_time(self.elapsed_time, include_hours=True)}")
+            self.clear()
+            self.start_btn.config(text="▶", bg="#2B2B2B")
+            return
 
     def save_laps(self):
         """Сохраняет круги в JSON-файл"""
@@ -220,14 +221,11 @@ class Stopwatch:
 
     def update_display(self):
         """Обновляет метку времени каждые 50 мс"""
+        current = time.time() - self.start_time
         if self.running:
-            current = time.time() - self.start_time
             self.time_label.config(text=f"{self.format_time(current)}")
-            h_current = int(current // 3600)
-
-            if h_current > self.hours:
-                self.hours = h_current
-                self.set_info(f"Часов прошло: {self.hours}")
+            if int(current // 3600) > 0:
+                self.time_label.config(text=f"{self.format_time(current, include_hours=True)}")
         else:
             self.time_label.config(text=f"{self.format_time(self.elapsed_time)}")
 

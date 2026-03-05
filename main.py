@@ -67,9 +67,9 @@ class Stopwatch:
             self.running = False
             self.elapsed_time = time.time() - self.start_time   # запоминаем накопленное время
             # Обновляем состояние кнопок
-            self.start_btn.config(state=tk.NORMAL)
-            self.stop_btn.config(state=tk.DISABLED)
-            self.lap_btn.config(state=tk.DISABLED)
+
+
+
 
     def reset(self):
         """Сбрасывает секундомер и все круги"""
