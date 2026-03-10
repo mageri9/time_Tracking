@@ -71,7 +71,7 @@ class StopwatchController:
         """Записывает круг или возвращает статистику.
 
         Возвращает словарь:
-        - {"type": "stats", "total": ..., "avg": ...}
+        - {"type": "stats", "total": ..., "total_today": ...}
         - {"type": "recorded", "elapsed": ...}
         """
         if (
@@ -79,9 +79,24 @@ class StopwatchController:
             and self.state.elapsed_time == 0.0
             and self.state.has_laps
         ):
-            total = sum(self.state.laps)
-            avg = total / len(self.state.laps)
-            return {"type": "stats", "total": total, "avg": avg}
+            today = datetime.now().date()
+            total_today = 0.0
+            total_all = 0.0
+
+            for session in self.sessions:
+                try:
+                    started = datetime.fromisoformat(session.started_at)
+                except ValueError:
+                    continue
+                total_all += session.total_seconds
+                if started.date() == today:
+                    total_today += session.total_seconds
+
+            return {
+                "type": "stats",
+                "total": total_all,
+                "total_today": total_today,
+            }
 
         self.stop()
         elapsed = self.state.elapsed_time

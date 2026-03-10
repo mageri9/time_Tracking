@@ -13,7 +13,7 @@ class StopwatchView:
         self.controller = controller
 
         self.root.title("Секундомер")
-        self.root.geometry("300x350")
+        self.root.geometry("300x300")
         self.root.resizable(False, False)
         # Подтверждение перед закрытием окна
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -174,11 +174,11 @@ class StopwatchView:
         result = self.controller.lap()
 
         if result["type"] == "stats":
-            total = result["total"]
-            avg = result["avg"]
+            total = result.get("total", 0.0)
+            total_today = result.get("total_today", 0.0)
             self.set_info(
-                f"       Всего: {format_time(total, include_hours=True)}\n"
-                f"✨В среднем: {format_time(avg, include_hours=True)}"
+                f"        Всего:{format_time(total, include_hours=True)}\n"
+                f"✨За сегодня:{format_time(total_today, include_hours=True)}"
             )
         else:
             self.lap_btn.config(bg="#666666")
