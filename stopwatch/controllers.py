@@ -1,9 +1,11 @@
 import json
 import os
 import time
-from typing import Dict, Literal
+from dataclasses import asdict
+from datetime import datetime, timedelta
+from typing import Dict, List, Literal
 
-from .models import StopwatchState
+from .models import LapRecord, SessionRecord, StopwatchState
 from .utils import parse_time
 
 
@@ -16,6 +18,7 @@ class StopwatchController:
     def __init__(self, data_file: str = "laps_data.json") -> None:
         self.state = StopwatchState()
         self.data_file = data_file
+        self.sessions: List[SessionRecord] = []
         self.load_laps()
 
     # --- Основные действия ---
@@ -82,6 +85,21 @@ class StopwatchController:
 
         self.stop()
         elapsed = self.state.elapsed_time
+
+        now = datetime.now()
+        finished_at = now.isoformat(timespec="seconds")
+        started_at = (now - timedelta(seconds=elapsed)).isoformat(timespec="seconds")
+
+        lap_record = LapRecord(seconds=elapsed, recorded_at=finished_at)
+        session = SessionRecord(
+            id=finished_at,
+            started_at=started_at,
+            finished_at=finished_at,
+            total_seconds=elapsed,
+            laps=[lap_record],
+        )
+
+        self.sessions.append(session)
         self.state.laps.append(elapsed)
         self.save_laps()
         self.clear()
@@ -96,15 +114,72 @@ class StopwatchController:
     # --- Работа с файлами ---
 
     def save_laps(self) -> None:
-        """Сохраняет круги в JSON-файл."""
-        with open(self.data_file, "w") as f:
-            json.dump(self.state.laps, f, indent=2)
+        """Сохраняет сессии и круги в JSON-файл."""
+        payload = {
+            "version": 1,
+            "sessions": [asdict(session) for session in self.sessions],
+        }
+        with open(self.data_file, "w", encoding="utf-8") as f:
+            json.dump(payload, f, indent=2, ensure_ascii=False)
 
     def load_laps(self) -> None:
-        """Загружает круги из JSON-файла."""
-        if os.path.exists(self.data_file):
-            with open(self.data_file, "r") as f:
-                self.state.laps = json.load(f)
-        else:
-            self.state.laps = []
+        """Загружает сессии и круги из JSON-файла.
+
+        Поддерживает два формата:
+        - новый: {"version": 1, "sessions": [...]}
+        - старый: [seconds, seconds, ...] — список длительностей кругов
+        """
+        self.sessions = []
+        self.state.laps = []
+
+        if not os.path.exists(self.data_file):
+            return
+
+        with open(self.data_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        # Новый формат с сессиями
+        if isinstance(data, dict) and "sessions" in data:
+            for sess in data.get("sessions", []):
+                laps_data = sess.get("laps", [])
+                laps = [
+                    LapRecord(
+                        seconds=float(lap.get("seconds", 0.0)),
+                        recorded_at=str(lap.get("recorded_at", "")),
+                    )
+                    for lap in laps_data
+                ]
+                session = SessionRecord(
+                    id=str(sess.get("id", "")),
+                    started_at=str(sess.get("started_at", "")),
+                    finished_at=str(sess.get("finished_at", "")),
+                    total_seconds=float(sess.get("total_seconds", 0.0)),
+                    laps=laps,
+                    note=str(sess.get("note", "")),
+                    tags=list(sess.get("tags", [])),
+                )
+                self.sessions.append(session)
+                for lap in laps:
+                    self.state.laps.append(lap.seconds)
+            return
+
+        # Старый формат: просто список длительностей кругов
+        if isinstance(data, list):
+            now = datetime.now()
+            for seconds in data:
+                try:
+                    value = float(seconds)
+                except (TypeError, ValueError):
+                    continue
+                finished_at = now.isoformat(timespec="seconds")
+                lap_record = LapRecord(seconds=value, recorded_at=finished_at)
+                session = SessionRecord(
+                    id=finished_at,
+                    started_at=finished_at,
+                    finished_at=finished_at,
+                    total_seconds=value,
+                    laps=[lap_record],
+                )
+                self.sessions.append(session)
+                self.state.laps.append(value)
 

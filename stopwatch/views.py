@@ -233,15 +233,18 @@ class StopwatchView:
     def update_display(self) -> None:
         """Обновляет метку времени каждые 50 мс."""
         current = self.controller.state.current_time
+
+        def format_for_display(amount: float) -> str:
+            # До часа показываем ММ:СС.сотые, после часа — ЧЧ:ММ:СС
+            if int(amount // 3600) > 0:
+                return format_time(amount, include_hours=True)
+            return format_time(amount)
+
         if self.controller.state.running:
-            self.time_label.config(text=f"{format_time(current)}")
-            if int(current // 3600) > 0:
-                self.time_label.config(
-                    text=f"{format_time(current, include_hours=True)}"
-                )
+            self.time_label.config(text=format_for_display(current))
         else:
             self.time_label.config(
-                text=f"{format_time(self.controller.state.elapsed_time)}"
+                text=format_for_display(self.controller.state.elapsed_time)
             )
 
         self.root.after(50, self.update_display)

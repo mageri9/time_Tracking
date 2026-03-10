@@ -26,3 +26,24 @@ class StopwatchState:
     def has_laps(self) -> bool:
         return bool(self.laps)
 
+
+@dataclass
+class LapRecord:
+    """Отдельный круг с моментом записи."""
+
+    seconds: float
+    recorded_at: str
+
+
+@dataclass
+class SessionRecord:
+    """Сессия измерения времени (может содержать несколько кругов)."""
+
+    id: str
+    started_at: str
+    finished_at: str
+    total_seconds: float
+    laps: List[LapRecord] = field(default_factory=list)
+    note: str = ""
+    tags: List[str] = field(default_factory=list)
+
