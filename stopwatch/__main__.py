@@ -1,13 +1,15 @@
 import tkinter as tk
-
-from .controllers import StopwatchController
-from .views import StopwatchView
+from stopwatch.controllers import StopwatchController
+from stopwatch.views import StopwatchView
 
 
 def main() -> None:
-    """Точка входа для запуска секундомера."""
     root = tk.Tk()
-    controller = StopwatchController()
+    root.withdraw()
+
+    controller = StopwatchController("laps_data.json")
+
+    root.deiconify()
     StopwatchView(root, controller)
     root.mainloop()
 

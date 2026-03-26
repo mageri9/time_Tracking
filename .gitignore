@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.pyc
+
+# Виртуальное окружение
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.bak
+
+# Данные приложения (локальные)
+laps_data.json
+users/
+*.db
+*.sqlite
+
+# Сборка exe
+build/
+dist/
+*.exe
+*.spec
+
+# Тесты
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Секреты
+.env
+.env.local
