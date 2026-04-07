@@ -1,10 +1,7 @@
 Timer Mimer — счетчик времени для фрилансера на Python/Tkinter.
 ===================================
 Делал для себя.
-
-
-![Image](https://github.com/user-attachments/assets/0641116b-d88a-44d8-a9c4-81504d193e04)
-
+![Image](https://github.com/user-attachments/assets/cee77c41-304f-41bc-a61e-a847d9c2b697)
 Возможности
 -----------
 - секундомер с паузой и сбросом
