@@ -2,8 +2,8 @@ Timer Mimer — счетчик времени для фрилансера на P
 ===================================
 Делал для себя.
 
-ДЕМО ПРОСМОТР:
-https://github.com/user-attachments/assets/63c4adac-2742-4dba-9703-43d9c2f66a0e
+
+![Image](https://github.com/user-attachments/assets/63c4adac-2742-4dba-9703-43d9c2f66a0e)
 
 Возможности
 -----------
