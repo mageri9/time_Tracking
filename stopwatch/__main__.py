@@ -1,16 +1,40 @@
+import queue
 import tkinter as tk
+
 from stopwatch.controllers import StopwatchController
+from stopwatch.tray import CMD_QUIT, CMD_SHOW, TrayManager
 from stopwatch.views import StopwatchView
 
 
 def main() -> None:
+    cmd_queue: queue.Queue = queue.Queue()
+
+    tray = TrayManager(cmd_queue)
+
     root = tk.Tk()
-    root.withdraw()
 
     controller = StopwatchController("laps_data.json")
+    view = StopwatchView(root, controller, tray, cmd_queue)
+
+    tray._view = view
+
+    tray.start()
+
+    def process_queue() -> None:
+        try:
+            while True:
+                cmd = cmd_queue.get_nowait()
+                if cmd == CMD_SHOW:
+                    view.show_window()
+                elif cmd == CMD_QUIT:
+                    view.quit_app()
+        except queue.Empty:
+            pass
+        root.after(100, process_queue)
+
+    process_queue()
 
     root.deiconify()
-    StopwatchView(root, controller)
     root.mainloop()
 
 
