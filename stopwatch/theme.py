@@ -1,32 +1,36 @@
 """
-Цветовая схема League Timer в стилистике League of Legends.
-Тёмно-синий фон, золотые акценты, бирюзовый прогресс.
+Цветовая схема League Timer.
+
 """
 
 COLORS = {
-    # Фон
-    "bg_dark":       "#010A13",   # основной фон окна
-    "bg_panel":      "#091428",   # панели, рамки
+    # Фон окна
+    "bg_dark":       "#010A13",
 
-    # Золото LoL
-    "gold":          "#C89B3C",   # основной золотой
-    "gold_bright":   "#F0E6D2",   # светлый золотой (текст таймера)
+    # Дисплей таймера
+    "timer_bg":      "#1a1a1a",
+    "timer_fg":      "#9bfa9b",
 
-    # Текст
-    "text_primary":  "#A09B8C",   # обычный текст
-    "text_timer":    "#F0E6D2",   # цифры таймера
+    # Обводка кнопок
+    "button_highlight": "#E0E0E0",
 
-    # Акценты
-    "green":         "#0AC8B9",   # бирюзовый (кнопка старт)
-    "red":           "#C83232",   # красный (кнопка сброс)
+    # Панель кнопок
+    "panel_bg":      "#333333",
 
     # Кнопки
-    "button_bg":     "#1E2328",   # фон кнопки
-    "button_fg":     "#C89B3C",   # текст на кнопке
-    "button_active": "#2E3328",   # фон при нажатии
-    "button_start":  "#0A3A32",   # фон кнопки старт когда идёт
+    "button_idle":   "#2B2B2B",
+    "button_fg":     "#9bfa9b",
+    "button_active": "#d1fac3",
 
-    # Рамки
-    "border":        "#C89B3C",   # обводка дисплея
-    "border_width":  2,
+    # Инфопанель
+    "info_bg":       "#1a1a1a",
+    "info_fg":       "#9bfa9b",
+
+    # activebackground
+    "active_start":     "#d1fac3",
+    "active_reset":     "#fa9191",
+    "active_lap":       "#9FD6F0",
+    # Состояния кнопок
+    "button_paused":    "#666666",
+
 }

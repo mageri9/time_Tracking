@@ -17,7 +17,7 @@ from .theme import COLORS
 ICON_SIZE = 32
 
 def _generate_icon() -> Image.Image:
-    """Генерируем иконку: золотой кружок с буквой L."""
+    """Генерируем иконку: золотой кружок с жирной буквой L."""
     img = Image.new("RGBA", (ICON_SIZE, ICON_SIZE), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
@@ -25,8 +25,16 @@ def _generate_icon() -> Image.Image:
 
     draw.ellipse(
         [padding, padding, ICON_SIZE - padding, ICON_SIZE - padding],
-        fill=COLORS["gold"],
+        fill=COLORS["info_fg"],
     )
+
+    for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, 1), (-1, 1), (1, -1)]:
+        draw.text(
+            (ICON_SIZE // 2 + dx, ICON_SIZE // 2 + dy),
+            "L",
+            fill=COLORS["bg_dark"],
+            anchor="mm",
+        )
 
     draw.text(
         (ICON_SIZE // 2, ICON_SIZE // 2),
@@ -57,7 +65,7 @@ class TrayManager:
 
     def start(self) -> None:
         """Запускает pystray в фоновом daemon-потоке."""
-        if self._thread is None:
+        if self._thread is not None:
             return
 
         self._thread = threading.Thread(target=self._run, daemon=True)
@@ -73,17 +81,20 @@ class TrayManager:
     def _run(self) -> None:
         """Точка входа для потока pystray (свой event loop)."""
         image = _generate_icon()
+
         menu = pystray.Menu(
             pystray.MenuItem("Показать", self._on_show, default=True),
             pystray.MenuItem("Выход", self._on_quit),
         )
+
         self.icon = pystray.Icon(
-            name="League Timer",
-            title="League Timer",
-            icon=image,
-            menu=menu,
-        )
+                name="League Timer",
+                title="League Timer",
+                icon=image,
+                menu=menu,
+            )
         self.icon.run()
+
 
     def _on_show(self) -> None:
         """Пользователь нажал "Показать" в меню трея."""

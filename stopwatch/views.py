@@ -1,30 +1,45 @@
 import tkinter as tk
 from tkinter import messagebox
+from typing import TYPE_CHECKING
 
 from .controllers import StopwatchController
+from .theme import COLORS
 from .utils import format_time
+
+if TYPE_CHECKING:
+    import queue
+    from .tray import TrayManager
 
 
 class StopwatchView:
     """GUI-обёртка над контроллером секундомера."""
 
-    def __init__(self, root: tk.Tk, controller: StopwatchController) -> None:
+    def __init__(
+            self,
+            root: tk.Tk,
+            controller: StopwatchController,
+            tray: "TrayManager",
+            cmd_queue: "queue.Queue",
+    ) -> None:
         self.root = root
         self.controller = controller
+        self.tray = tray
+        self.cmd_queue = cmd_queue
+        self.auto_mode = True
 
-        self.root.title("Секундомер")
+        self.root.title("League Timer")
         self.root.geometry("300x300")
         self.root.resizable(False, False)
-        # Подтверждение перед закрытием окна
-        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
+        self.root.configure(bg=COLORS["bg_dark"])
+        self.root.protocol("WM_DELETE_WINDOW", self.hide_window)
 
         # Дисплей времени
         self.time_label = tk.Label(
             root,
             text="00:00.00",
             font=("Courier New", 41, "bold"),
-            bg="#1a1a1a",
-            fg="#9bfa9b",
+            bg=COLORS["timer_bg"],
+            fg=COLORS["timer_fg"],
             relief="sunken",
             bd=20,
         )
@@ -33,7 +48,7 @@ class StopwatchView:
         self.time_label.bind("<Double-Button-1>", self.start_edit)
 
         # Рамка для кнопок
-        btn_frame = tk.Frame(root, bg="#333333", height=50)
+        btn_frame = tk.Frame(root, bg=COLORS["panel_bg"], height=50)
         btn_frame.pack(fill="x")
         btn_frame.pack_propagate(False)
 
@@ -41,13 +56,13 @@ class StopwatchView:
         self.start_btn = tk.Button(
             btn_frame,
             text="▶",
-            bg="#2B2B2B",
-            fg="#9bfa9b",
+            bg=COLORS["button_idle"],
+            fg=COLORS["button_fg"],
             bd=6,
             font=("Arial", 30),
-            highlightbackground="#E0E0E0",
+            highlightbackground=COLORS["button_highlight"],
+            activebackground=COLORS["active_start"],
             highlightthickness=2,
-            activebackground="#d1fac3",
             width=8,
             command=self.toggle_start_pause,
         )
@@ -57,13 +72,13 @@ class StopwatchView:
         self.reset_btn = tk.Button(
             btn_frame,
             text="🔄",
-            bg="#2B2B2B",
-            fg="#9bfa9b",
+            bg=COLORS["button_idle"],
+            fg=COLORS["button_fg"],
             font=("Arial", 30),
             bd=6,
-            highlightbackground="#E0E0E0",
+            highlightbackground=COLORS["button_highlight"],
             highlightthickness=2,
-            activebackground="#fa9191",
+            activebackground=COLORS["active_reset"],
             width=8,
             command=self.reset,
         )
@@ -73,13 +88,13 @@ class StopwatchView:
         self.lap_btn = tk.Button(
             btn_frame,
             text="⏱️",
-            bg="#666666",
-            fg="#9bfa9b",
+            bg=COLORS["button_idle"],
+            fg=COLORS["button_fg"],
             bd=6,
             font=("Arial", 30),
-            highlightbackground="#E0E0E0",
+            highlightbackground=COLORS["button_highlight"],
             highlightthickness=2,
-            activebackground="#9FD6F0",
+            activebackground=COLORS["active_lap"],
             width=8,
             command=self.lap,
         )
@@ -94,11 +109,12 @@ class StopwatchView:
         self.info_label = tk.Label(
             root,
             font=("Arial", 16),
-            bg="#1a1a1a",
-            fg="#9bfa9b",
+            bg=COLORS["info_bg"],
+            fg=COLORS["info_fg"],
             relief="sunken",
             bd=20,
             anchor="w",
+            justify="left",
         )
         self.info_label.pack(fill="both", expand=True, padx=0, pady=0)
 
@@ -116,19 +132,19 @@ class StopwatchView:
         """Показывает сообщение в инфопанели."""
         self.info_label.config(text=f"✨ {message}")
 
-    def on_close(self) -> None:
-        """Обработка попытки закрыть окно."""
-        if self.controller.state.running:
-            should_quit = messagebox.askokcancel(
-                "Закрыть секундомер?",
-                "Секундомер сейчас идёт.\n"
-                "Если закрыть окно, отсчёт прервётся.\n\n"
-                "Точно выйти?",
-                parent=self.root,
-            )
-            if not should_quit:
-                return
+    def hide_window(self) -> None:
+        """Сворачивает окно в трей вместо закрытия."""
+        self.root.withdraw()
 
+    def show_window(self) -> None:
+        self.root.deiconify()
+        self.root.lift()
+        self.root.focus_force()
+
+    def quit_app(self) -> None:
+        if self.controller.state.running:
+            self.controller.stop()
+        self.tray.stop()
         self.root.destroy()
 
     # --- Обработчики кнопок ---
@@ -196,9 +212,9 @@ class StopwatchView:
         self.edit_entry = tk.Entry(
             self.root,
             font=("Arial", 48),
-            bg="#1a1a1a",
-            fg="#9bfa9b",
-            insertbackground="#9bfa9b",
+            bg=COLORS["timer_bg"],
+            fg=COLORS["timer_fg"],
+            insertbackground=COLORS["border"],
             borderwidth=0,
             justify="center",
         )
