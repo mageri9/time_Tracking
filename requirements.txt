@@ -1,0 +1,13 @@
+# League Timer dependencies
+# Core (no change)
+tkinter  # bundled with Python
+
+# Systray
+pystray>=0.19.0
+Pillow>=10.0.0
+
+# Process monitoring
+psutil>=5.9.0
+
+# Build (optional, for exe generation)
+pyinstaller>=6.0.0
