@@ -7,6 +7,7 @@ python -m PyInstaller ^
     --onefile ^
     --name LeagueWatcher ^
     --hidden-import psutil ^
+    --icon=league_timer.ico ^
     watcher.py
 
 echo.

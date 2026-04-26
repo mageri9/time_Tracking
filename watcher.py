@@ -50,9 +50,22 @@ def is_league_running() -> bool:
             continue
     return False
 
+def is_watcher_already_running() -> bool:
+    """Проверяет, не запущен ли уже LeagueWatcher.exe."""
+    current_pid = os.getpid()
+    for proc in psutil.process_iter(["name", "pid"]):
+        try:
+            if proc.info["name"] == "LeagueWatcher.exe" and proc.info["pid"] != current_pid:
+                return True
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+    return False
+
 
 def main() -> None:
     """Основной цикл: спим, проверяем, запускаем."""
+    if is_watcher_already_running():
+        sys.exit(0)
     timer_path = find_timer_path()
     if timer_path is None:
         # Нет смысла работать без таймера

@@ -70,6 +70,7 @@ echo [4/5] Building LeagueWatcher.exe...
     --onefile ^
     --name LeagueWatcher ^
     --hidden-import psutil ^
+    --icon=league_timer.ico ^
     watcher.py
 
 echo.

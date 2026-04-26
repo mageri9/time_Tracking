@@ -234,7 +234,7 @@ class StopwatchView:
             elapsed = result["elapsed"]
             self.set_info(
                 f"Записано {format_time(elapsed, include_hours=True)}\n"
-                f"Нажми ⏱️ для статистики"
+                f"      Нажми ⏱️ для статистики"
             )
             self.start_btn.config(text="▶", bg=COLORS["button_idle"])
 
