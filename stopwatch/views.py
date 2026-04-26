@@ -143,6 +143,10 @@ class StopwatchView:
         """Авто-старт/пауза по наличию процесса Лиги (раз в 3 сек)."""
         league_running = is_league_running()
 
+        if not self.auto_mode:
+            if league_running == self.controller.state.running:
+                self.auto_mode = True
+
         if self.auto_mode:
             if league_running and not self.controller.state.running:
                 self.controller.start()
