@@ -1,4 +1,5 @@
 import queue
+import sys
 import tkinter as tk
 
 from stopwatch.controllers import StopwatchController
@@ -7,8 +8,9 @@ from stopwatch.views import StopwatchView
 
 
 def main() -> None:
-    cmd_queue: queue.Queue = queue.Queue()
+    start_minimized = "--minimized" in sys.argv
 
+    cmd_queue: queue.Queue = queue.Queue()
     tray = TrayManager(cmd_queue)
 
     root = tk.Tk()
@@ -17,7 +19,6 @@ def main() -> None:
     view = StopwatchView(root, controller, tray, cmd_queue)
 
     tray._view = view
-
     tray.start()
 
     def process_queue() -> None:
@@ -35,8 +36,11 @@ def main() -> None:
         root.after(100, process_queue)
 
     process_queue()
+    if start_minimized:
+        root.withdraw()
+    else:
+        root.deiconify()
 
-    root.deiconify()
     root.mainloop()
 
 
