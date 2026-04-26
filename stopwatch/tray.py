@@ -86,21 +86,26 @@ class TrayManager:
     # --- Внутренние ---
 
     def _run(self) -> None:
-        """Точка входа для потока pystray (свой event loop)."""
-        image = _generate_icon()
+        """Точка входа для потока pystray."""
+        # Пробуем загрузить иконку из файла, иначе генерируем
+        import os
+        icon_path = os.path.join(os.path.dirname(__file__), "..", "league_timer.ico")
+        if os.path.exists(icon_path):
+            image = Image.open(icon_path)
+        else:
+            image = _generate_icon()
 
         menu = pystray.Menu(
             pystray.MenuItem("Start/Pause", self._on_start, default=True),
             pystray.MenuItem("Show", self._on_show),
             pystray.MenuItem("Quit", self._on_quit),
         )
-
         self.icon = pystray.Icon(
-                name="League Timer",
-                title="League Timer",
-                icon=image,
-                menu=menu,
-            )
+            name="League Timer",
+            title="League Timer",
+            icon=image,
+            menu=menu,
+        )
         self.icon.run()
 
 
