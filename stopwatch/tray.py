@@ -115,3 +115,8 @@ class TrayManager:
     def _on_start(self) -> None:
         """Пользователь нажал Старт/Пауза в меню трея."""
         self.queue.put(CMD_START)
+
+    def set_tooltip(self, text: str) -> None:
+        """Меняет тултип у иконки в трее."""
+        if self.icon is not None:
+            self.icon.title = text

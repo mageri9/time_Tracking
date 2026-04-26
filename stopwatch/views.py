@@ -293,6 +293,7 @@ class StopwatchView:
             self.time_label.config(
                 text=format_for_display(self.controller.state.elapsed_time)
             )
-
+        current_text = self.time_label.cget("text")
+        self.tray.set_tooltip(current_text)
         self.root.after(50, self.update_display)
 
