@@ -1,3 +1,4 @@
+import atexit
 import queue
 import sys
 import tkinter as tk
@@ -5,9 +6,16 @@ import tkinter as tk
 from stopwatch.controllers import StopwatchController
 from stopwatch.tray import CMD_QUIT, CMD_SHOW, CMD_START, TrayManager
 from stopwatch.views import StopwatchView
+from stopwatch.lock import already_running, create_lock, remove_lock
 
 
 def main() -> None:
+    if already_running():
+        sys.exit(0)
+
+    create_lock()
+    atexit.register(remove_lock)
+
     start_minimized = "--minimized" in sys.argv
 
     cmd_queue: queue.Queue = queue.Queue()
