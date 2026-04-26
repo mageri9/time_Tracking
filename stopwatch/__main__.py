@@ -2,7 +2,7 @@ import queue
 import tkinter as tk
 
 from stopwatch.controllers import StopwatchController
-from stopwatch.tray import CMD_QUIT, CMD_SHOW, TrayManager
+from stopwatch.tray import CMD_QUIT, CMD_SHOW, CMD_START, TrayManager
 from stopwatch.views import StopwatchView
 
 
@@ -28,6 +28,8 @@ def main() -> None:
                     view.show_window()
                 elif cmd == CMD_QUIT:
                     view.quit_app()
+                elif cmd == CMD_START:
+                    view.toggle_start_pause()
         except queue.Empty:
             pass
         root.after(100, process_queue)

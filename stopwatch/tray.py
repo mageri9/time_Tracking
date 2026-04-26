@@ -47,6 +47,7 @@ def _generate_icon() -> Image.Image:
 
 CMD_SHOW = "SHOW"
 CMD_QUIT = "QUIT"
+CMD_START = "START"
 
 class TrayManager:
     """
@@ -89,8 +90,9 @@ class TrayManager:
         image = _generate_icon()
 
         menu = pystray.Menu(
-            pystray.MenuItem("Показать", self._on_show, default=True),
-            pystray.MenuItem("Выход", self._on_quit),
+            pystray.MenuItem("Start/Pause", self._on_start, default=True),
+            pystray.MenuItem("Show", self._on_show),
+            pystray.MenuItem("Quit", self._on_quit),
         )
 
         self.icon = pystray.Icon(
@@ -109,3 +111,7 @@ class TrayManager:
     def _on_quit(self) -> None:
         """Пользователь нажал "Выход" в меню трея."""
         self.queue.put(CMD_QUIT)
+
+    def _on_start(self) -> None:
+        """Пользователь нажал Старт/Пауза в меню трея."""
+        self.queue.put(CMD_START)
