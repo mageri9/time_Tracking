@@ -96,8 +96,8 @@ class TrayManager:
             image = _generate_icon()
 
         menu = pystray.Menu(
-            pystray.MenuItem("Start/Pause", self._on_start, default=True),
-            pystray.MenuItem("Show", self._on_show),
+            pystray.MenuItem("Start/Pause", self._on_start),
+            pystray.MenuItem("Show", self._on_show, default=True),
             pystray.MenuItem("Quit", self._on_quit),
         )
         self.icon = pystray.Icon(

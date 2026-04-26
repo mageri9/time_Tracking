@@ -2,7 +2,7 @@ import psutil
 
 # Для теста без LoL — замена на ["notepad.exe"]
 LEAGUE_PROCESS = [
-    "notepad.exe",
+    "League of Legends.exe",
 ]
 
 def is_league_running() -> bool:

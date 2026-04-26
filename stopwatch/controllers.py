@@ -147,7 +147,7 @@ class StopwatchController:
         self.sessions = []
         self.state.laps = []
 
-        if not os.path.exists(self.data_file):
+        if self.data_file == ":memory:" or not os.path.exists(self.data_file):
             return
 
         with open(self.data_file, "r", encoding="utf-8") as f:
