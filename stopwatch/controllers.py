@@ -198,3 +198,36 @@ class StopwatchController:
                 self.sessions.append(session)
                 self.state.laps.append(value)
 
+    def get_stats_today(self) -> float:
+        """Суммарное время за сегодня."""
+        today = datetime.now().date()
+        total = 0.0
+        for session in self.sessions:
+            try:
+                started = datetime.fromisoformat(session.started_at)
+            except ValueError:
+                continue
+            if started.date() == today:
+                total += session.total_seconds
+        return total
+
+    def get_stats_week(self) -> float:
+        """Суммарное время за последние 7 дней (включая сегодня)."""
+        today = datetime.now().date()
+        week_ago = today - timedelta(days=7)
+        total = 0.0
+        for session in self.sessions:
+            try:
+                started = datetime.fromisoformat(session.started_at)
+            except ValueError:
+                continue
+            if week_ago <= started.date() <= today:
+                total += session.total_seconds
+        return total
+
+    def get_stats_total(self) -> float:
+        """Суммарное время за всё время."""
+        total = 0.0
+        for session in self.sessions:
+            total += session.total_seconds
+        return total

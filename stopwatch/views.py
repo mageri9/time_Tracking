@@ -109,7 +109,7 @@ class StopwatchView:
         # Информационная панель
         self.info_label = tk.Label(
             root,
-            font=("Arial", 16),
+            font=("Arial", 13),
             bg=COLORS["info_bg"],
             fg=COLORS["info_fg"],
             relief="sunken",
@@ -217,11 +217,14 @@ class StopwatchView:
         result = self.controller.lap()
 
         if result["type"] == "stats":
-            total = result.get("total", 0.0)
-            total_today = result.get("total_today", 0.0)
+            today = self.controller.get_stats_today()
+            week = self.controller.get_stats_week()
+            total = self.controller.get_stats_total()
+
             self.set_info(
-                f"        Всего:{format_time(total, include_hours=True)}\n"
-                f"✨За сегодня:{format_time(total_today, include_hours=True)}"
+                f"Сегодня:  {format_time(today, include_hours=True)}\n"
+                f"✨Неделя:   {format_time(week, include_hours=True)}\n"
+                f"✨Всего:    {format_time(total, include_hours=True)}"
             )
         else:
             self.lap_btn.config(bg=COLORS["button_paused"])
