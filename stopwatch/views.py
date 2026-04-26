@@ -171,6 +171,8 @@ class StopwatchView:
     def quit_app(self) -> None:
         if self.controller.state.running:
             self.controller.stop()
+            if self.controller.state.elapsed_time > 0:
+                self.controller.lap()
         self.tray.stop()
         self.root.destroy()
 
