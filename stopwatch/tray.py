@@ -76,6 +76,12 @@ class TrayManager:
             self.icon.stop()
             self.icon = None
 
+    def notify(self, message: str) -> None:
+        """Показывает всплывающее уведомление над треем."""
+        if self.icon is not None:
+            self.icon.notify(message, title="League Timer")
+
+
     # --- Внутренние ---
 
     def _run(self) -> None:

@@ -143,20 +143,18 @@ class StopwatchView:
         """Авто-старт/пауза по наличию процесса Лиги (раз в 3 сек)."""
         league_running = is_league_running()
 
-        if not self.auto_mode:
-            if (league_running and not self.controller.state.running) or \
-                    (not league_running and self.controller.state.running):
-                self.auto_mode = True  # синхронизируемся с процессом
-
         if self.auto_mode:
             if league_running and not self.controller.state.running:
                 self.controller.start()
                 self.start_btn.config(text="⏸")
-                self.set_info("")
+                self.set_info("LoL запущен.✨")
+                self.tray.notify("Таймер запущен")
+
             elif not league_running and self.controller.state.running:
                 self.controller.stop()
                 self.start_btn.config(text="▶")
-                self.set_info("")
+                self.set_info("LoL закрыт✨")
+                self.tray.notify("Таймер на паузе")
 
         self.root.after(3000, self.check_process)
 
@@ -176,19 +174,17 @@ class StopwatchView:
 
     def toggle_start_pause(self) -> None:
         """Переключает между состояниями запущено/пауза."""
-        self.auto_mode = False  # пользователь взял управление на себя
+        self.auto_mode = False
 
         if self.controller.state.running:
             self.controller.stop()
-            button_text, button_color = "▶", "#2B2B2B"
+            button_text = "▶"
         else:
             self.controller.start()
-            button_text, button_color = "⏸", "#666666"
-            self.reset_btn.config(bg="#2B2B2B")
-            self.lap_btn.config(bg="#2B2B2B")
+            button_text = "⏸"
 
-        self.set_info("✨✨")
-        self.start_btn.config(text=button_text, bg=button_color)
+        self.set_info("")
+        self.start_btn.config(text=button_text)
 
     def reset(self) -> None:
         """Сбрасывает секундомер и все круги с возможностью отмены."""
