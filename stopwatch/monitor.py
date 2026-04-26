@@ -1,15 +1,21 @@
 import psutil
 
-# Для теста без LoL — замена на ["notepad.exe"]
-LEAGUE_PROCESS = [
+LEAGUE_PROCESSES = [
+    "LeagueClientUx.exe",
     "League of Legends.exe",
 ]
 
+
+def _get_processes():
+    """Обёртка для psutil.process_iter (для тестирования)."""
+    return psutil.process_iter(["name"])
+
+
 def is_league_running() -> bool:
-    """Возвращает True, если процесс Лиги запущен."""
-    for proc in psutil.process_iter(["name"]):
+    """Возвращает True, если хотя бы один процесс Лиги запущен."""
+    for proc in _get_processes():
         try:
-            if proc.info["name"] in LEAGUE_PROCESS:
+            if proc.info["name"] in LEAGUE_PROCESSES:
                 return True
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
