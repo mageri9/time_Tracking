@@ -182,13 +182,14 @@ class StopwatchView:
 
         if self.controller.state.running:
             self.controller.stop()
-            button_text = "▶"
+            self.start_btn.config(text="▶", bg=COLORS["button_idle"])
         else:
             self.controller.start()
-            button_text = "⏸"
+            self.start_btn.config(text="⏸", bg=COLORS["button_paused"])
+            self.reset_btn.config(bg=COLORS["button_idle"])
+            self.lap_btn.config(bg=COLORS["button_idle"])
 
         self.set_info("")
-        self.start_btn.config(text=button_text)
 
     def reset(self) -> None:
         """Сбрасывает секундомер и все круги с возможностью отмены."""
