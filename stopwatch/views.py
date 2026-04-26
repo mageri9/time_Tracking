@@ -195,16 +195,16 @@ class StopwatchView:
         result = self.controller.reset()
 
         if result == "restored":
-            self.reset_btn.config(bg="#2B2B2B")
+            self.reset_btn.config(bg=COLORS["button_idle"])
             self.set_info(" Время восстановлено")
         elif result == "saved":
-            self.reset_btn.config(bg="#666666")
-            self.lap_btn.config(bg="#2B2B2B")
+            self.reset_btn.config(bg=COLORS["button_paused"])
+            self.lap_btn.config(bg=COLORS["button_idle"])
             self.set_info("🔄 Нажми для отмены")
         else:
             self.set_info(" Нет времени\n       для сброса")
 
-        self.start_btn.config(text="▶", bg="#2B2B2B")
+        self.start_btn.config(text="▶", bg=COLORS["button_idle"])
         self.update_display()
 
     def clear(self) -> None:
@@ -224,13 +224,13 @@ class StopwatchView:
                 f"✨За сегодня:{format_time(total_today, include_hours=True)}"
             )
         else:
-            self.lap_btn.config(bg="#666666")
+            self.lap_btn.config(bg=COLORS["button_paused"])
             elapsed = result["elapsed"]
             self.set_info(
                 f"Записано {format_time(elapsed, include_hours=True)}\n"
                 f"Нажми ⏱️ для статистики"
             )
-            self.start_btn.config(text="▶", bg="#2B2B2B")
+            self.start_btn.config(text="▶", bg=COLORS["button_idle"])
 
     # --- Редактирование времени ---
 

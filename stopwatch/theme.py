@@ -20,7 +20,6 @@ COLORS = {
     # Кнопки
     "button_idle":   "#2B2B2B",
     "button_fg":     "#9bfa9b",
-    "button_active": "#d1fac3",
 
     # Инфопанель
     "info_bg":       "#1a1a1a",
@@ -30,6 +29,7 @@ COLORS = {
     "active_start":     "#d1fac3",
     "active_reset":     "#fa9191",
     "active_lap":       "#9FD6F0",
+
     # Состояния кнопок
     "button_paused":    "#666666",
 
