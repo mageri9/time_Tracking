@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from .controllers import StopwatchController
 from .theme import COLORS
 from .utils import format_time
+from .monitor import is_league_running
 
 if TYPE_CHECKING:
     import queue
@@ -126,6 +127,8 @@ class StopwatchView:
 
         self.update_display()
 
+        self.root.after(500, self.check_process)
+
     # --- Служебные методы GUI ---
 
     def set_info(self, message: str) -> None:
@@ -135,6 +138,28 @@ class StopwatchView:
     def hide_window(self) -> None:
         """Сворачивает окно в трей вместо закрытия."""
         self.root.withdraw()
+
+    def check_process(self) -> None:
+        """Авто-старт/пауза по наличию процесса Лиги (раз в 3 сек)."""
+        league_running = is_league_running()
+
+        if not self.auto_mode:
+            if (league_running and not self.controller.state.running) or \
+                    (not league_running and self.controller.state.running):
+                self.auto_mode = True  # синхронизируемся с процессом
+
+        if self.auto_mode:
+            if league_running and not self.controller.state.running:
+                self.controller.start()
+                self.start_btn.config(text="⏸")
+                self.set_info("")
+            elif not league_running and self.controller.state.running:
+                self.controller.stop()
+                self.start_btn.config(text="▶")
+                self.set_info("")
+
+        self.root.after(3000, self.check_process)
+
 
     def show_window(self) -> None:
         self.root.deiconify()
@@ -151,6 +176,8 @@ class StopwatchView:
 
     def toggle_start_pause(self) -> None:
         """Переключает между состояниями запущено/пауза."""
+        self.auto_mode = False  # пользователь взял управление на себя
+
         if self.controller.state.running:
             self.controller.stop()
             button_text, button_color = "▶", "#2B2B2B"
