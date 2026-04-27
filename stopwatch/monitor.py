@@ -1,7 +1,6 @@
 import psutil
 
 LEAGUE_PROCESSES = [
-    "LeagueClientUx.exe",
     "League of Legends.exe",
 ]
 
