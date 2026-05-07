@@ -80,7 +80,7 @@ class TrayManager:
     def notify(self, message: str) -> None:
         """Показывает всплывающее уведомление над треем."""
         if self.icon is not None:
-            self.icon.notify(message, title="League Timer")
+            self.icon.notify(message, title="Timer")
 
 
     # --- Внутренние ---
@@ -89,7 +89,7 @@ class TrayManager:
         """Точка входа для потока pystray."""
         # Пробуем загрузить иконку из файла, иначе генерируем
         import os
-        icon_path = os.path.join(os.path.dirname(__file__), "..", "league_timer.ico")
+        icon_path = os.path.join(os.path.dirname(__file__), "..", "_timer.ico")
         if os.path.exists(icon_path):
             image = Image.open(icon_path)
         else:
@@ -101,8 +101,8 @@ class TrayManager:
             pystray.MenuItem("Quit", self._on_quit),
         )
         self.icon = pystray.Icon(
-            name="League Timer",
-            title="League Timer",
+            name="Timer",
+            title="Timer",
             icon=image,
             menu=menu,
         )

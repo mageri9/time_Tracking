@@ -1,20 +1,16 @@
-import atexit
 import queue
 import sys
 import tkinter as tk
+import os
 
 from stopwatch.controllers import StopwatchController
 from stopwatch.tray import CMD_QUIT, CMD_SHOW, CMD_START, TrayManager
 from stopwatch.views import StopwatchView
-from stopwatch.lock import already_running, create_lock, remove_lock
+from PIL import Image, ImageTk
+import ctypes
 
 
 def main() -> None:
-    if already_running():
-        sys.exit(0)
-
-    create_lock()
-    atexit.register(remove_lock)
 
     start_minimized = "--minimized" in sys.argv
 
@@ -22,6 +18,22 @@ def main() -> None:
     tray = TrayManager(cmd_queue)
 
     root = tk.Tk()
+
+    if getattr(sys, 'frozen', False):
+        base_dir = os.path.dirname(sys.executable)
+    else:
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    icon_path = os.path.join(base_dir, "_timer.ico")
+    if os.path.exists(icon_path):
+        from PIL import Image, ImageTk
+        ico = Image.open(icon_path)
+        root.iconphoto(True, ImageTk.PhotoImage(ico))
+
+    try:
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("Timer.TimerApp")
+    except Exception:
+        pass
 
     controller = StopwatchController("laps_data.json")
     view = StopwatchView(root, controller, tray, cmd_queue)

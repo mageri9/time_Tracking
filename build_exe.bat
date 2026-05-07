@@ -6,16 +6,15 @@ python -m PyInstaller ^
     --noconsole ^
     --onefile ^
     --name LeagueTimer ^
-    --add-data "league_timer.ico;." ^
+    --add-data "_timer.ico;." ^
     --hidden-import pystray ^
     --hidden-import PIL ^
     --hidden-import PIL.Image ^
     --hidden-import PIL.ImageDraw ^
-    --hidden-import psutil ^
     --hidden-import queue ^
-    --icon=league_timer.ico ^
+    --icon=_timer.ico ^
     stopwatch\__main__.py
 
 echo.
-echo Сборка завершена: dist\LeagueTimer.exe
+echo Сборка завершена: dist\Timer.exe
 pause

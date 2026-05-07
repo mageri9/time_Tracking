@@ -1,11 +1,9 @@
 import tkinter as tk
-from tkinter import messagebox
 from typing import TYPE_CHECKING
 
 from .controllers import StopwatchController
 from .theme import COLORS
 from .utils import format_time
-from .monitor import is_league_running
 
 if TYPE_CHECKING:
     import queue
@@ -26,9 +24,8 @@ class StopwatchView:
         self.controller = controller
         self.tray = tray
         self.cmd_queue = cmd_queue
-        self.auto_mode = True
 
-        self.root.title("League Timer")
+        self.root.title("Timer")
         self.root.geometry("300x300")
         self.root.resizable(False, False)
         self.root.configure(bg=COLORS["bg_dark"])
@@ -127,8 +124,6 @@ class StopwatchView:
 
         self.update_display()
 
-        self.root.after(500, self.check_process)
-
     # --- Служебные методы GUI ---
 
     def set_info(self, message: str) -> None:
@@ -138,30 +133,6 @@ class StopwatchView:
     def hide_window(self) -> None:
         """Сворачивает окно в трей вместо закрытия."""
         self.root.withdraw()
-
-    def check_process(self) -> None:
-        """Авто-старт/пауза по наличию процесса Лиги (раз в 3 сек)."""
-        league_running = is_league_running()
-
-        if not self.auto_mode:
-            if league_running == self.controller.state.running:
-                self.auto_mode = True
-
-        if self.auto_mode:
-            if league_running and not self.controller.state.running:
-                self.controller.start()
-                self.start_btn.config(text="⏸")
-                self.set_info("LoL запущен.✨")
-                self.tray.notify("Таймер запущен")
-
-            elif not league_running and self.controller.state.running:
-                self.controller.stop()
-                self.start_btn.config(text="▶")
-                self.set_info("LoL закрыт✨")
-                self.tray.notify("Таймер на паузе")
-
-        self.root.after(3000, self.check_process)
-
 
     def show_window(self) -> None:
         self.root.deiconify()
@@ -180,7 +151,6 @@ class StopwatchView:
 
     def toggle_start_pause(self) -> None:
         """Переключает между состояниями запущено/пауза."""
-        self.auto_mode = False
 
         if self.controller.state.running:
             self.controller.stop()
