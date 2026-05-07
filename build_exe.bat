@@ -5,7 +5,7 @@ python -m PyInstaller ^
     --noconfirm ^
     --noconsole ^
     --onefile ^
-    --name LeagueTimer ^
+    --name Timer ^
     --add-data "_timer.ico;." ^
     --hidden-import pystray ^
     --hidden-import PIL ^

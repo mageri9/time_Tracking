@@ -12,6 +12,11 @@ import ctypes
 
 def main() -> None:
 
+    try:
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("Timer.TimerApp")
+    except Exception:
+        pass
+
     start_minimized = "--minimized" in sys.argv
 
     cmd_queue: queue.Queue = queue.Queue()
@@ -26,14 +31,8 @@ def main() -> None:
 
     icon_path = os.path.join(base_dir, "_timer.ico")
     if os.path.exists(icon_path):
-        from PIL import Image, ImageTk
-        ico = Image.open(icon_path)
-        root.iconphoto(True, ImageTk.PhotoImage(ico))
-
-    try:
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("Timer.TimerApp")
-    except Exception:
-        pass
+        root.iconbitmap(icon_path)
+        root.wm_iconbitmap(icon_path)
 
     controller = StopwatchController("laps_data.json")
     view = StopwatchView(root, controller, tray, cmd_queue)
