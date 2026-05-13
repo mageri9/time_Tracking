@@ -40,34 +40,54 @@ if "%PYTHON%"=="" (
     exit /b 1
 )
 
-echo [1/3] Python found. Creating virtual environment...
+echo [1/4] Python found. Creating virtual environment...
 "%PYTHON%" -m venv .venv
 
-echo [2/3] Installing dependencies...
+echo [2/4] Installing dependencies...
 call .venv\Scripts\activate
 "%PYTHON%" -m pip install -r requirements.txt --quiet
 
-echo [3/3] Building Timer.exe...
+echo [3/4] Building Timer.exe...
 "%PYTHON%" -m PyInstaller ^
     --noconfirm ^
     --noconsole ^
     --onefile ^
+    --windowed ^
     --name Timer ^
     --add-data "_timer.ico;." ^
+    --add-data "stopwatch\theme.py;stopwatch" ^
+    --add-data "stopwatch\models.py;stopwatch" ^
+    --add-data "stopwatch\views.py;stopwatch" ^
+    --add-data "stopwatch\controllers.py;stopwatch" ^
+    --add-data "stopwatch\single_instance.py;stopwatch" ^
+    --add-data "stopwatch\tray.py;stopwatch" ^
+    --add-data "stopwatch\utils.py;stopwatch" ^
     --hidden-import pystray ^
     --hidden-import PIL ^
     --hidden-import PIL.Image ^
     --hidden-import PIL.ImageDraw ^
     --hidden-import queue ^
+    --collect-all pystray ^
+    --collect-all PIL ^
     --icon=_timer.ico ^
     stopwatch\__main__.py
+
+echo [4/4] Creating shortcut...
+set "INSTALL_DIR=%USERPROFILE%\Timer"
+if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
+
+copy "dist\Timer.exe" "%INSTALL_DIR%\Timer.exe" >nul
+copy "_timer.ico" "%INSTALL_DIR%\_timer.ico" >nul
+
+REM Create shortcut using PowerShell
+powershell -Command "$WS = New-Object -ComObject WScript.Shell; $SC = $WS.CreateShortcut('%USERPROFILE%\Desktop\Timer.lnk'); $SC.TargetPath = '%INSTALL_DIR%\Timer.exe'; $SC.IconLocation = '%INSTALL_DIR%\_timer.ico'; $SC.WorkingDirectory = '%INSTALL_DIR%'; $SC.Save()"
 
 echo.
 echo ========================================
 echo  DONE!
-echo    dist\Timer.exe
+echo    EXE: %INSTALL_DIR%\Timer.exe
+echo    Shortcut: Desktop\Timer.lnk
 echo ========================================
 echo.
 
-echo.
 pause

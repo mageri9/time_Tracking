@@ -135,9 +135,17 @@ class StopwatchView:
         self.root.withdraw()
 
     def show_window(self) -> None:
+        self.root.after(0, self._show_window_internal)
+
+    def _show_window_internal(self):
         self.root.deiconify()
+        self.root.state("normal")
+
         self.root.lift()
-        self.root.focus_force()
+        self.root.attributes("-topmost", True)
+        self.root.after(100, lambda: self.root.attributes("-topmost", False))
+
+        self.root.after(150, self.root.focus_force)
 
     def quit_app(self) -> None:
         if self.controller.state.running:
@@ -145,6 +153,7 @@ class StopwatchView:
             if self.controller.state.elapsed_time > 0:
                 self.controller.lap()
         self.tray.stop()
+        self.root.quit()
         self.root.destroy()
 
     # --- Обработчики кнопок ---
@@ -212,12 +221,16 @@ class StopwatchView:
 
     def start_edit(self, event: tk.Event) -> None:  # type: ignore[type-arg]
         """Начинает редактирование времени."""
+        if hasattr(self, "edit_entry") and self.edit_entry.winfo_exists():
+            return
+
         self.edit_entry = tk.Entry(
             self.root,
             font=("Arial", 48),
             bg=COLORS["timer_bg"],
             fg=COLORS["timer_fg"],
-            insertbackground=COLORS["border"],
+            insertbackground=COLORS["timer_fg"],
+            relief="flat",
             borderwidth=0,
             justify="center",
         )
