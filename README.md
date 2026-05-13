@@ -22,9 +22,8 @@
 * 🚫 Только один экземпляр приложения
 * 📦 Portable `.exe` сборка
 
----
-![Timer Demo](<img width="298" height="330" alt="Image" src="https://github.com/user-attachments/assets/ddef3608-c6dd-4145-8163-a4bee5658bb6" />)
----
+
+![Timer Demo](https://github.com/user-attachments/assets/ddef3608-c6dd-4145-8163-a4bee5658bb6)
 
 ## Управление
 
