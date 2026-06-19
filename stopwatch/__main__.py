@@ -6,7 +6,7 @@ import os
 from stopwatch.controllers import StopwatchController
 from stopwatch.tray import CMD_QUIT, CMD_SHOW, CMD_START, TrayManager
 from stopwatch.views import StopwatchView
-from stopwatch.single_instance import SingleInstance  # новый импорт
+from stopwatch.single_instance import SingleInstance
 from PIL import Image, ImageTk
 import ctypes
 
@@ -19,7 +19,7 @@ def main() -> None:
         pass
 
     # === ПРОВЕРКА НА ЕДИНСТВЕННЫЙ ЭКЗЕМПЛЯР ===
-    single = SingleInstance(app_name="Timer", port=49152)
+    single = SingleInstance(app_name="Timer", port = 45013)
 
     def activate_existing_window():
         """Активирует существующее окно при попытке запуска второго экземпляра."""
@@ -27,8 +27,12 @@ def main() -> None:
             main.view.show_window()
 
     # Регистрируемся как единственный экземпляр
-    if not single.register(on_activate=activate_existing_window):
-        # Приложение уже запущено, выходим
+    result = single.register(on_activate=activate_existing_window)
+
+    print("REGISTER RESULT:", result)
+    print("SINGLE OBJECT:", single.__dict__)
+
+    if not result:
         print("Timer is already running!")
         sys.exit(0)
 

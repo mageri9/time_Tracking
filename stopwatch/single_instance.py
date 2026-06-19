@@ -45,10 +45,11 @@ class SingleInstance:
 
             return True  # Первый экземпляр
 
-        except socket.error:
-            # Порт занят - приложение уже запущено
+        except socket.error as e:
+            print("SOCKET ERROR:", e)
+            print("ERRNO:", e.errno)
             self._send_activate_signal()
-            return False  # Второй экземпляр
+            return False
 
     def _send_activate_signal(self):
         """Отправляет сигнал существующему приложению."""
