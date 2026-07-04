@@ -1,4 +1,4 @@
-# Timer
+
 ![Timer Demo](https://github.com/user-attachments/assets/ddef3608-c6dd-4145-8163-a4bee5658bb6)
 
 Минималистичный desktop-таймер для Windows с треем, статистикой времени и быстрым ручным вводом.
